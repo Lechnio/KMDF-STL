@@ -11,5 +11,6 @@
     <ClInclude Include="vector.hpp" />
     <ClInclude Include="tests.hpp" />
     <ClInclude Include="string.hpp" />
+    <ClInclude Include="mutex.hpp" />
   </ItemGroup>
 </Project>

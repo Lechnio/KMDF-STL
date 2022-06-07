@@ -92,6 +92,7 @@
     <FilesToPackage Include="$(TargetPath)" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="mutex.hpp" />
     <ClInclude Include="string.hpp" />
     <ClInclude Include="tests.hpp" />
     <ClInclude Include="tiny_stl.hpp" />
