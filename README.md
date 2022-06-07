@@ -1,10 +1,10 @@
-## Windows Kernel Tiny STL
+# Windows Kernel Tiny STL
 Simple Windows Kernel STL containers implementation.
 
-#### Usage
+### Usage
 Copy all includes to your project and include `tiny_stl.hpp`.
 
-#### Example
+### Example
 ```cpp
 #include <wdm.h>
 #include "tiny_stl.hpp"
@@ -55,7 +55,7 @@ Out from [DbgView](https://docs.microsoft.com/en-us/sysinternals/downloads/debug
 00000007	4.13199377	[Tiny]: Driver unloaded	
 ```
 
-#### Tests
+### Tests
 Implemented tests guarantee `tiny::` containters behaviour to be comatible with `std::` containers.\
 Running tests:
 ```cpp
@@ -65,3 +65,9 @@ Running tests:
 tiny::runTests();
 // ...
 ```
+
+### TODO
+* list
+* string/wstring insensitive compare/find
+* initializer list constructors
+* smart pointers
