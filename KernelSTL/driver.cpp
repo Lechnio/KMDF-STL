@@ -2,7 +2,6 @@
 // Kernel STL containers example
 //
 
-#include <wdm.h>
 #include "tiny_stl.hpp"
 #include "tests.hpp"
 

@@ -1,4 +1,3 @@
-#include <wdm.h>
 #include "tests.hpp"
 #include "tiny_stl.hpp"
 

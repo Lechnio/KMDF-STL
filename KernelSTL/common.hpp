@@ -1,23 +1,24 @@
 #pragma once
 
-#include <wdm.h>
+#include <ntifs.h>
 
 #define ALLOC_MEMORY(_size) ExAllocatePool2(POOL_FLAG_NON_PAGED, _size, 'YNIT')
 #define FREE_MEMORY(__mem) ExFreePoolWithTag(__mem, 0)
 
-namespace tiny {
-template <typename T>
-inline void global_object_pointer_initialize(T** globalObjectPointer)
-{
-	*globalObjectPointer = reinterpret_cast<T*>(ALLOC_MEMORY(sizeof(T)));
-	**globalObjectPointer = T();
-}
+void* __cdecl operator new(size_t Size) noexcept(false);
+void __cdecl operator delete(void* mem);
 
-template <typename T>
-inline void global_object_pointer_destroy(T** globalObjectPointer)
-{
-	(*globalObjectPointer)->~T();
-	FREE_MEMORY(*globalObjectPointer);
-	*globalObjectPointer = nullptr;
-}
+namespace tiny {
+	template <typename T>
+	inline void global_object_pointer_initialize(T** globalObjectPointer)
+	{
+		*globalObjectPointer = new T();
+	}
+
+	template <typename T>
+	inline void global_object_pointer_destroy(T** globalObjectPointer)
+	{
+		delete *globalObjectPointer;
+		*globalObjectPointer = nullptr;
+	}
 }
