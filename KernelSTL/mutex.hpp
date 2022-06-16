@@ -10,22 +10,27 @@ namespace tiny {
 		mutex(const mutex&) = delete;
 
 		inline mutex() {
-			KeInitializeGuardedMutex(&_nativeHandle);
+			tiny::global_object_pointer_initialize(&_nativeHandle);
+			KeInitializeGuardedMutex(_nativeHandle);
+		}
+
+		inline ~mutex() {
+			tiny::global_object_pointer_destroy(&_nativeHandle);
 		}
 
 		inline void lock() {
-			KeAcquireGuardedMutex(&_nativeHandle);
+			KeAcquireGuardedMutex(_nativeHandle);
 		}
 
 		inline bool try_lock() {
-			KeTryToAcquireGuardedMutex(&_nativeHandle);
+			return KeTryToAcquireGuardedMutex(_nativeHandle);
 		}
 
 		inline void unlock() {
-			KeReleaseGuardedMutex(&_nativeHandle);
+			KeReleaseGuardedMutex(_nativeHandle);
 		}
 	private:
-		KGUARDED_MUTEX _nativeHandle;
+		PKGUARDED_MUTEX _nativeHandle;
 	};
 
 	class shared_mutex {
@@ -34,19 +39,21 @@ namespace tiny {
 		shared_mutex(const shared_mutex&) = delete;
 
 		inline shared_mutex() {
-			FltInitializePushLock(&_nativeHandle);
+			tiny::global_object_pointer_initialize(&_nativeHandle);
+			FltInitializePushLock(_nativeHandle);
 		}
 
 		inline ~shared_mutex() {
-			FltDeletePushLock(&_nativeHandle);
+			FltDeletePushLock(_nativeHandle);
+			tiny::global_object_pointer_destroy(&_nativeHandle);
 		}
 
 		inline void lock() {
-			FltAcquirePushLockExclusiveEx(&_nativeHandle, 0);
+			FltAcquirePushLockExclusiveEx(_nativeHandle, 0);
 		}
 
 		inline void lock_shared() {
-			FltAcquirePushLockSharedEx(&_nativeHandle, 0);
+			FltAcquirePushLockSharedEx(_nativeHandle, 0);
 		}
 
 		inline bool try_lock() {
@@ -56,18 +63,18 @@ namespace tiny {
 
 		inline bool try_lock_shared() {
 			lock_shared();
-			return false;
+			return true;
 		}
 
 		inline void unlock() {
-			FltReleasePushLockEx(&_nativeHandle, 0);
+			FltReleasePushLockEx(_nativeHandle, 0);
 		}
 
 		inline void unlock_shared() {
-			FltReleasePushLockEx(&_nativeHandle, 0);
+			FltReleasePushLockEx(_nativeHandle, 0);
 		}
 	private:
-		EX_PUSH_LOCK _nativeHandle;
+		PEX_PUSH_LOCK _nativeHandle;
 	};
 
 	template <typename T>
@@ -86,5 +93,22 @@ namespace tiny {
 
 	private:
 		T& _obj;
+	};
+
+	class shared_lock {
+	public:
+		shared_lock& operator=(const shared_lock&) = delete;
+		shared_lock(const shared_lock&) = delete;
+
+		inline explicit shared_lock(tiny::shared_mutex& obj) : _obj(obj) {
+			_obj.lock_shared();
+		}
+
+		inline ~shared_lock() {
+			_obj.unlock_shared();
+		}
+
+	private:
+		tiny::shared_mutex& _obj;
 	};
 }
